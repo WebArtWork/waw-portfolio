@@ -27,7 +27,7 @@ module.exports = async waw => {
 					path.join(template, 'dist', 'portfolios.html'),
 					{
 						...seo,
-						description: 'Welcome to our platform, where you can hire professionals for repairs or installations in your apartment by reviewing their portfolios. You can find various professional services that include repair work, electrical services, plumbing, painting, and more. You can browse through the portfolios of repairmen and other professionals to assess their knowledge and skills.',
+						description: waw.config.portfolioDescription
 						portfolios,
 						categories: await waw.tag_groups('portfolios')
 					},
