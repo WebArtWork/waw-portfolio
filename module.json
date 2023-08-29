@@ -1,4 +1,5 @@
 {
+     "repo" : "git@github.com:WebArtWork/waw-portfolio.git",
     "name": "Portfolio",
     "router": "index.js schema.js",
     "crud": {
