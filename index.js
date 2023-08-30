@@ -27,7 +27,7 @@ module.exports = async waw => {
 					path.join(template, 'dist', 'portfolios.html'),
 					{
 						...seo,
-						description: waw.config.portfolioDescription
+						description: waw.config.portfolioDescription,
 						portfolios,
 						categories: await waw.tag_groups('portfolios')
 					},
