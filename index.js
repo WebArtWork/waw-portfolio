@@ -101,4 +101,10 @@ module.exports = async waw => {
 			}
 		}
 	});
+	await waw.wait(100);
+          if (waw.store_landing) {
+          waw.store_landing.portfolios = async (query)=>{
+         return await waw.portfolios(query, 4);
+          }
+       }
 };
