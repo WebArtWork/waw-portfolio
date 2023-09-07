@@ -31,7 +31,7 @@ module.exports = async waw => {
                                                 description: waw.config.portfolioDescription || waw.config.description,
                                                 image: waw.config.portfolioImage|| waw.config.image,
 						portfolios,
-						groups: waw.tag_groups('portfolio')
+						categories: waw.tag_groups('portfolio')
 					},
 					waw.translate(req)
 				)
