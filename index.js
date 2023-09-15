@@ -44,7 +44,6 @@ module.exports = async waw => {
 		if (typeof waw.serve_portfolios[req.get("host")] === "function") {
 			waw.serve_portfolios[req.get("host")](req, res);
 		} else {
-			const tags = await waw.tags('portflio');
 
 			const portfolio = await Portflio.findOne({
 				_id: req.params._id
