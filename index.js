@@ -62,13 +62,13 @@ module.exports = async waw => {
 		}
 	});
 
-	waw.portfolios = async (query, limit) => {
+	waw.portfolios = async (query = {}, limit, count = false) => {
+		let exe = count ? waw.Portfolio.countDocuments(query) : waw.Portfolio.find(query);
 		if (limit) {
-			return await waw.Portfolio.find(query).limit(limit);
-		} else {
-			return await waw.Portfolio.find(query);
+			exe = exe.limit(limit);
 		}
-	}
+		return await exe;
+	};
 
 	waw.portfolio = async (query) => {
 		return await waw.Portfolio.findOne(query);
