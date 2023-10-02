@@ -2,10 +2,7 @@
 	"repo": "git@github.com:WebArtWork/waw-portfolio.git",
 	"name": "Portfolio",
 	"crud": {
-		"get": [
-			"",
-			"public"
-		],
+		"get": ["", "public"],
 		"update": {
 			"keys": [
 				"thumb",
@@ -17,9 +14,7 @@
 				"data"
 			]
 		},
-		"delete": [
-			""
-		]
+		"delete": [""]
 	},
 	"dependencies": {}
 }
