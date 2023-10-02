@@ -7,8 +7,8 @@ module.exports = async (waw) => {
 	waw.serve_portfolios = {};
 	waw.serve_portfolio = {};
 	const portfolios = async (req, res) => {
-		if (typeof waw.serve_portfolio[req.get("host")] === "function") {
-			waw.serve_portfolio[req.get("host")](req, res);
+		if (typeof waw.serve_portfolios[req.get("host")] === "function") {
+			waw.serve_portfolios[req.get("host")](req, res);
 		} else {
 			const portfolios = await waw.portfolios(
 				req.params.tag_id ? { tag: req.params.tag_id } : {}
@@ -35,8 +35,8 @@ module.exports = async (waw) => {
 	waw.app.get("/portfolios", portfolios);
 	waw.app.get("/portfolios/:tag_id", portfolios);
 	waw.app.get("/portfolio/:_id", async (req, res) => {
-		if (typeof waw.serve_portfolios[req.get("host")] === "function") {
-			waw.serve_portfolios[req.get("host")](req, res);
+		if (typeof waw.serve_portfolio[req.get("host")] === "function") {
+			waw.serve_portfolio[req.get("host")](req, res);
 		} else {
 			const portfolio = await waw.Portflio.findOne({
 				_id: req.params._id,
