@@ -2,6 +2,66 @@ const path = require("path");
 const template = path.join(process.cwd(), "template");
 
 module.exports = async (waw) => {
+	waw.crud("business", {
+		get: [
+			{
+				ensure: waw.next,
+			},
+			{
+				name: "public",
+				ensure: waw.next,
+				query: () => {
+					return {};
+				},
+			},
+		],
+		update: {
+			query: (req) => {
+				if (req.user.is.admin) {
+					return {
+						_id: req.body._id,
+					};
+				} else {
+					return {
+						moderators: req.user._id,
+						_id: req.body._id,
+					};
+				}
+			},
+		},
+		delete: {
+			query: (req) => {
+				if (req.user.is.admin) {
+					return {
+						_id: req.body._id,
+					};
+				} else {
+					return {
+						moderators: req.user._id,
+						_id: req.body._id,
+					};
+				}
+			},
+		},
+		create: {
+			ensure: async (req, res, next) => {
+				if (req.body.name) {
+					req.body.url = req.body.name
+						.toLowerCase()
+						.replace(/[^a-z0-9]/g, "");
+				}
+				while (await waw.Portfolio.count({ url: req.body.url })) {
+					const url = req.body.url.split("_");
+					req.body.url =
+						url[0] +
+						"_" +
+						(url.length > 1 ? Number(url[1]) + 1 : 1);
+				}
+				next();
+			}),
+		},
+	});
+
 	waw.build(template, "portfolios");
 	waw.build(template, "portfolio");
 	waw.serve_portfolios = {};
@@ -38,9 +98,11 @@ module.exports = async (waw) => {
 		if (typeof waw.serve_portfolio[req.get("host")] === "function") {
 			waw.serve_portfolio[req.get("host")](req, res);
 		} else {
-			const portfolio = await waw.Portflio.findOne({
-				_id: req.params._id,
-			});
+			const portfolio = await waw.Portflio.findOne(
+			waw.mongoose.Types.ObjectId.isValid(req.params._id)
+				? { _id: req.params._id }
+				: { url: req.params._id }
+			);
 
 			res.send(
 				waw.render(
