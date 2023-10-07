@@ -2,7 +2,7 @@ const path = require("path");
 const template = path.join(process.cwd(), "template");
 
 module.exports = async (waw) => {
-	waw.crud("business", {
+	waw.crud("portfolio", {
 		get: [
 			{
 				ensure: waw.next,
@@ -59,7 +59,7 @@ module.exports = async (waw) => {
 				}
 				next();
 			}),
-		},
+		}
 	});
 
 	waw.build(template, "portfolios");
