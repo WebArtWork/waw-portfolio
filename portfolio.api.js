@@ -50,6 +50,7 @@ module.exports = async (waw) => {
 						.toLowerCase()
 						.replace(/[^a-z0-9]/g, "");
 				}
+				if(req.body.url) {
 				while (await waw.Portfolio.count({ url: req.body.url })) {
 					const url = req.body.url.split("_");
 					req.body.url =
@@ -57,6 +58,7 @@ module.exports = async (waw) => {
 						"_" +
 						(url.length > 1 ? Number(url[1]) + 1 : 1);
 				}
+			}
 				next();
 				}
 		}
