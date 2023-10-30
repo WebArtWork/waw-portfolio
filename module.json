@@ -3,6 +3,7 @@
 	"name": "Portfolio",
 	"crud": {
 		"get": ["", "public"],
+		"unique": [ "url" ],
 		"update": {
 			"keys": [
 				"thumb",
