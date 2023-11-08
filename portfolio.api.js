@@ -105,7 +105,7 @@ module.exports = async (waw) => {
 		if (typeof waw.serve_portfolio[req.get("host")] === "function") {
 			waw.serve_portfolio[req.get("host")](req, res);
 		} else {
-			const portfolio = await waw.Portflio.findOne(
+			const portfolio = await waw.Portfolio.findOne(
 			waw.mongoose.Types.ObjectId.isValid(req.params._id)
 				? { _id: req.params._id }
 				: { url: req.params._id }
