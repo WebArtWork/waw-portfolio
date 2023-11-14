@@ -50,17 +50,17 @@ module.exports = async (waw) => {
 						.toLowerCase()
 						.replace(/[^a-z0-9]/g, "");
 				}
-				if(req.body.url) {
-				while (await waw.Portfolio.count({ url: req.body.url })) {
-					const url = req.body.url.split("_");
-					req.body.url =
-						url[0] +
-						"_" +
-						(url.length > 1 ? Number(url[1]) + 1 : 1);
+				if (req.body.url) {
+					while (await waw.Portfolio.count({ url: req.body.url })) {
+						const url = req.body.url.split("_");
+						req.body.url =
+							url[0] +
+							"_" +
+							(url.length > 1 ? Number(url[1]) + 1 : 1);
+					}
 				}
-			}
 				next();
-				}
+			}
 		}
 	})
 	const seo = {
@@ -69,59 +69,61 @@ module.exports = async (waw) => {
 		image: 'https://body.webart.work/template/img/logo.png'
 	};
 
-	waw.build(template, "portfolios");
-	waw.build(template, "portfolio");
-	waw.serve_portfolios = {};
-	waw.serve_portfolio = {};
 	const portfolios = async (req, res) => {
-		if (typeof waw.serve_portfolios[req.get("host")] === "function") {
-			waw.serve_portfolios[req.get("host")](req, res);
-		} else {
-			const portfolios = await waw.Portfolio.find(
-				req.params.tag_id ? { tag: req.params.tag_id } : {}
-			);
+		const portfolios = await waw.Portfolio.find(
+			req.params.tag_id ? { tag: req.params.tag_id } : {}
+		);
 
-			res.send(
-				waw.render(
-					path.join(template, "dist", "portfolios.html"),
-					{
-						...waw.config,
-						title: waw.config.portfolioTitle || waw.config.title,
-						description:
-							waw.config.portfolioDescription ||
-							waw.config.description,
-						image: waw.config.portfolioImage || waw.config.image,
-						portfolios,
-						categories: await waw.tag_groups("portfolio"),
-					},
-					waw.translate(req)
-				)
-			);
-		}
+		res.send(
+			waw.render(
+				path.join(template, "dist", "portfolios.html"),
+				{
+					...waw.config,
+					title: waw.config.portfolioTitle || waw.config.title,
+					description:
+						waw.config.portfolioDescription ||
+						waw.config.description,
+					image: waw.config.portfolioImage || waw.config.image,
+					portfolios,
+					categories: await waw.tag_groups("portfolio"),
+				},
+				waw.translate(req)
+			)
+		);
 	};
-	waw.app.get("/portfolios", portfolios);
-	waw.app.get("/portfolios/:tag_id", portfolios);
-	waw.app.get("/portfolio/:_id", async (req, res) => {
-		if (typeof waw.serve_portfolio[req.get("host")] === "function") {
-			waw.serve_portfolio[req.get("host")](req, res);
-		} else {
-			const portfolio = await waw.Portfolio.findOne(
-			waw.mongoose.Types.ObjectId.isValid(req.params._id)
-				? { _id: req.params._id }
-				: { url: req.params._id }
-			);
 
-			res.send(
-				waw.render(
-					path.join(template, "dist", "portfolio.html"),
-					{
-						...waw.config,
-						portfolio
-					},
-					waw.translate(req)
-				)
-			);
-		}
+	waw.api({
+		domain: waw.config.land,
+		template: {
+			path: template,
+			prefix: "/template",
+			pages: "portfolio portfolios",
+		},
+		page: {
+			"/test/:any": (req, res) => {
+				res.json(req.urlParams);
+			},
+			"/portfolios": portfolios,
+			"/portfolios/:tag_id": portfolios,
+			"/portfolio/:_id": async (req, res) => {
+				const portfolio = await waw.Portfolio.findOne(
+					waw.mongoose.Types.ObjectId.isValid(req.params._id)
+						? { _id: req.params._id }
+						: { url: req.params._id }
+				);
+
+				res.send(
+					waw.render(
+						path.join(template, "dist", "portfolio.html"),
+						{
+							...waw.config,
+							portfolio
+						},
+						waw.translate(req)
+					)
+				);
+			},
+		},
 	});
 
 	waw.portfolios = async (query = {}, limit, count = false) => {
