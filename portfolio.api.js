@@ -129,6 +129,15 @@ module.exports = async (waw) => {
 		fillJson.footer.portfolios = fillJson.portfolios;
 	}
 
+		waw.storePortfolio = async (store, fillJson, req) => {
+		fillJson.portfolio = await waw.portfolio({
+			 author: store.author,
+			_id: req.params._id  
+		});
+
+		fillJson.footer.portfolio = fillJson.portfolio;
+	}
+
 	waw.portfolios = async (query = {}, limit, count = false) => {
 		let exe = count
 			? waw.Portfolio.countDocuments(query)
