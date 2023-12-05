@@ -138,6 +138,14 @@ module.exports = async (waw) => {
 		fillJson.footer.portfolio = fillJson.portfolio;
 	}
 
+	waw.storeTopPortfolios = async (store, fillJson) => {
+		fillJson.topPortfolios = await waw.portfolios({
+			 author: store.author,
+		}, 4);
+
+		fillJson.footer.topPortfolios = fillJson.topPortfolios;
+	}
+
 	waw.portfolios = async (query = {}, limit, count = false) => {
 		let exe = count
 			? waw.Portfolio.countDocuments(query)
