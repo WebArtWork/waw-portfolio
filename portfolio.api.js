@@ -127,7 +127,7 @@ module.exports = async (waw) => {
 		});
 	
 		fillJson.portfoliosByTag = [];
-		for (const poertfolio of fillJson.portfolios) {
+		for (const portfolio of fillJson.portfolios) {
 			 if (!portfolio.tag) continue;
 			const tagObj = fillJson.portfoliosByTag.find(c => c.id === portfolio.tag.toString());
 			if (tagObj) {
