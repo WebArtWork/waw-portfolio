@@ -122,23 +122,23 @@ module.exports = async (waw) => {
 	});
 
 	waw.storePortfolios = async (store, fillJson) => {
-		fillJson.poertfolios = await waw.poertfolios({
+		fillJson.portfolios = await waw.portfolios({
 			author: store.author
 		});
 	
-		fillJson.poertfoliosByTag = [];
-		for (const poertfolio of fillJson.poertfolios) {
-			 if (!poertfolio.tag) continue;
-			const tagObj = fillJson.poertfoliosByTag.find(c => c.id === poertfolio.tag.toString());
+		fillJson.portfoliosByTag = [];
+		for (const poertfolio of fillJson.portfolios) {
+			 if (!portfolio.tag) continue;
+			const tagObj = fillJson.portfoliosByTag.find(c => c.id === portfolio.tag.toString());
 			if (tagObj) {
-				tagObj.poertfolios.push(poertfolio);
+				tagObj.portfolios.push(portfolio);
 			} else {
-				const tag = waw.getTag(article.tag);
+				const tag = waw.getTag(portfolio.tag);
 				fillJson.portfoliosByTag.push({
-					id: article.tag,
+					id: portfolio.tag,
 					name: tag.name,
 					short: tag.short,
-					tags: [article]
+					tags: [portfolio]
 				})
 			}
 		}
