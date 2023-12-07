@@ -125,25 +125,49 @@ module.exports = async (waw) => {
 		fillJson.portfolios = await waw.portfolios({
 			author: store.author
 		});
-	
+
 		fillJson.portfoliosByTag = [];
 		for (const portfolio of fillJson.portfolios) {
-			 if (!portfolio.tag) continue;
+			if (!portfolio.tag) continue;
 			const tagObj = fillJson.portfoliosByTag.find(c => c.id.toString() === portfolio.tag.toString());
 			if (tagObj) {
 				tagObj.portfolios.push(portfolio);
 			} else {
 				const tag = waw.getTag(portfolio.tag);
+
 				fillJson.portfoliosByTag.push({
 					id: portfolio.tag,
+					category: tag.category,
 					name: tag.name,
-					short: tag.short,
+					description: tag.description,
 					portfolios: [portfolio]
 				})
 			}
 		}
-	
-		fillJson.footer.portfolios = fillJson.portfolios;
+
+		fillJson.portfoliosByCategory = [];
+		for (const byTag of fillJson.portfoliosByTag) {
+			const categoryObj = fillJson.portfoliosByCategory.find(c => c.id.toString() === byTag.category.toString());
+			if (categoryObj) {
+				categoryObj.tags.push(byTag);
+
+				for (const portfolio of byTag.portfolios) {
+					if (!categoryObj.portfolios.find(s => s.id === portfolio.id)) {
+						categoryObj.portfolios.push(portfolio)
+					}
+				}
+			} else {
+				const category = waw.getCategory(byTag.category);
+
+				fillJson.portfoliosByCategory.push({
+					id: byTag.category,
+					name: category.name,
+					description: category.description,
+					portfolios: byTag.portfolios.slice(),
+					tags: [byTag]
+				})
+			}
+		}
 	}
 
 		waw.storePortfolio = async (store, fillJson, req) => {
