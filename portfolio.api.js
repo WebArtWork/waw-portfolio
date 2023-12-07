@@ -129,7 +129,7 @@ module.exports = async (waw) => {
 		fillJson.portfoliosByTag = [];
 		for (const portfolio of fillJson.portfolios) {
 			 if (!portfolio.tag) continue;
-			const tagObj = fillJson.portfoliosByTag.find(c => c.id === portfolio.tag.toString());
+			const tagObj = fillJson.portfoliosByTag.find(c => c.id.toString() === portfolio.tag.toString());
 			if (tagObj) {
 				tagObj.portfolios.push(portfolio);
 			} else {
@@ -138,7 +138,7 @@ module.exports = async (waw) => {
 					id: portfolio.tag,
 					name: tag.name,
 					short: tag.short,
-					tags: [portfolio]
+					portfolios: [portfolio]
 				})
 			}
 		}
