@@ -158,22 +158,23 @@ module.exports = async (waw) => {
 				}
 			} else {
 				const category = waw.getCategory(byTag.category);
-
-				fillJson.portfoliosByCategory.push({
-					id: byTag.category,
-					name: category.name,
-					description: category.description,
-					portfolios: byTag.portfolios.slice(),
-					tags: [byTag]
-				})
+				if (category) {
+					fillJson.portfoliosByCategory.push({
+						id: byTag.category,
+						name: category.name,
+						description: category.description,
+						portfolios: byTag.portfolios.slice(),
+						tags: [byTag]
+					})
+				}
 			}
 		}
 	}
 
-		waw.storePortfolio = async (store, fillJson, req) => {
+	waw.storePortfolio = async (store, fillJson, req) => {
 		fillJson.portfolio = await waw.portfolio({
-			 author: store.author,
-			_id: req.params._id  
+			author: store.author,
+			_id: req.params._id
 		});
 
 		fillJson.footer.portfolio = fillJson.portfolio;
@@ -181,7 +182,7 @@ module.exports = async (waw) => {
 
 	waw.storeTopPortfolios = async (store, fillJson) => {
 		fillJson.topPortfolios = await waw.portfolios({
-			 author: store.author,
+			author: store.author,
 		}, 4);
 
 		fillJson.footer.topPortfolios = fillJson.topPortfolios;
