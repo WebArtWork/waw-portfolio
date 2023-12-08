@@ -134,7 +134,7 @@ module.exports = async (waw) => {
 				tagObj.portfolios.push(portfolio);
 			} else {
 				const tag = waw.getTag(portfolio.tag);
-
+				if (tag) {
 				fillJson.portfoliosByTag.push({
 					id: portfolio.tag,
 					category: tag.category,
