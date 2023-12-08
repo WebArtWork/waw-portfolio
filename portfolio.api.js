@@ -141,7 +141,8 @@ module.exports = async (waw) => {
 					name: tag.name,
 					description: tag.description,
 					portfolios: [portfolio]
-				})
+					})
+				}
 			}
 		}
 
