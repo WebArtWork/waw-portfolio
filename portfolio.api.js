@@ -67,7 +67,7 @@ module.exports = async (waw) => {
 	const portfolios = async (req, res) => {
 		const portfolios = await waw.Portfolio.find(
 			req.params.tag_id ? { tag: req.params.tag_id } : {}
-		);
+		).limit(10);;
 
 		res.send(
 			waw.render(
