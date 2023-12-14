@@ -75,10 +75,12 @@ module.exports = async (waw) => {
 	})
 
 
-	const docs = await waw.Institution.find({});
+	const docs = await waw.Portfolio.find({});
 	for (const doc of docs) {
-		doc.domain = waw.config.land;
-		await doc.save();
+		if (!doc.domain) {
+			doc.domain = waw.config.land;
+			await doc.save();
+		}
 	}
 
 	waw.servePortfolios = async (req, res) => {
