@@ -5,6 +5,7 @@ module.exports = function(waw) {
 		name: String,
 		url: { type: String, sparse: true, trim: true, unique: true },
 		short: String,
+		domain: String,
 		description: String,
 		data: {},
 		tag: {
@@ -36,6 +37,8 @@ module.exports = function(waw) {
 		this.thumbs = obj.thumbs;
 
 		this.url = obj.url;
+
+		this.domain = obj.domain;
 
 		this.name = obj.name;
 
