@@ -147,6 +147,72 @@ module.exports = async (waw) => {
 		);
 	}
 
+	waw.operatorPortfolios = async (operator, fillJson) => {
+		fillJson.portfolios = await waw.portfolios({
+			domain: operator.domain
+		});
+
+		fillJson.portfoliosByTag = [];
+		for (const portfolio of fillJson.portfolios) {
+			if (!portfolio.tag) continue;
+			const tagObj = fillJson.portfoliosByTag.find(c => c.id.toString() === portfolio.tag.toString());
+			if (tagObj) {
+				tagObj.portfolios.push(portfolio);
+			} else {
+				const tag = waw.getTag(portfolio.tag);
+
+				fillJson.portfoliosByTag.push({
+					id: portfolio.tag,
+					category: tag.category,
+					name: tag.name,
+					description: tag.description,
+					portfolios: [portfolio]
+				})
+			}
+		}
+
+		fillJson.portfoliosByCategory = [];
+		for (const byTag of fillJson.portfoliosByTag) {
+			const categoryObj = fillJson.portfoliosByCategory.find(c => c.id.toString() === byTag.category.toString());
+			if (categoryObj) {
+				categoryObj.tags.push(byTag);
+
+				for (const portfolio of byTag.portfolios) {
+					if (!categoryObj.portfolios.find(s => s.id === portfolio.id)) {
+						categoryObj.portfolios.push(portfolio)
+					}
+				}
+			} else {
+				const category = waw.getCategory(byTag.category);
+
+				fillJson.portfoliosByCategory.push({
+					id: byTag.category,
+					name: category.name,
+					description: category.description,
+					portfolios: byTag.portfolios.slice(),
+					tags: [byTag]
+				})
+			}
+		}
+	}
+
+	waw.operatorPortfolio = async (operator, fillJson, req) => {
+		fillJson.portfolio = await waw.portfolio({
+			domain: operator.domain,
+			_id: req.params._id
+		});
+
+		fillJson.footer.portfolio = fillJson.portfolio;
+	}
+
+	waw.operatorTopPortfolios = async (operator, fillJson) => {
+		fillJson.topPortfolios = await waw.portfolios({
+			domain: operator.domain
+		}, 4);
+
+		fillJson.footer.topPortfolios = fillJson.topPortfolios;
+	}
+
 	waw.storePortfolios = async (store, fillJson) => {
 		fillJson.portfolios = await waw.portfolios({
 			author: store.author
