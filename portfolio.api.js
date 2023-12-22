@@ -251,7 +251,7 @@ module.exports = async (waw) => {
 					}
 				}
 			} else {
-				const category = waw.getCategory(byTag.category);
+				const category = waw.getCategory(byTag.category)
 				if (category) {
 					fillJson.portfoliosByCategory.push({
 						id: byTag.category,
