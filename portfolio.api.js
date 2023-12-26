@@ -120,9 +120,6 @@ module.exports = async (waw) => {
 			pages: "portfolio portfolios",
 		},
 		page: {
-			"/test/:any": (req, res) => {
-				res.json(req.urlParams);
-			},
 			"/portfolios": waw.servePortfolios,
 			"/portfolios/:tag_id": waw.servePortfolios,
 			"/portfolio/:_id": waw.servePortfolio
