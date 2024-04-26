@@ -1,5 +1,13 @@
 module.exports = function(waw) {
 	const Schema = waw.mongoose.Schema({
+		top: {
+			type: Boolean,
+			default: false
+		},
+		enabled: {
+			type: Boolean,
+			default: false
+		},
 		thumb: String,
 		thumbs: [String],
 		name: String,
@@ -12,6 +20,10 @@ module.exports = function(waw) {
 			type: waw.mongoose.Schema.Types.ObjectId,
 			ref: 'Tag'
 		},
+		tags: [{
+			type: waw.mongoose.Schema.Types.ObjectId,
+			ref: 'Tag'
+		}],
 		author: {
 			type: waw.mongoose.Schema.Types.ObjectId,
 			ref: 'User'
@@ -27,25 +39,18 @@ module.exports = function(waw) {
 
 	Schema.methods.create = function (obj, user, waw) {
 		this.author = user._id;
-
 		this.moderators = [user._id];
-
+		this.enabled = obj.enabled;
+		this.top = obj.top;
 		this.tag = obj.tag;
-
+		this.tags = obj.tags;
 		this.thumb = obj.thumb;
-
 		this.thumbs = obj.thumbs;
-
 		this.url = obj.url;
-
 		this.domain = obj.domain;
-
 		this.name = obj.name;
-
 		this.description = obj.description;
-
 		this.short = obj.short;
-
 		this.data = obj.data;
 	}
 

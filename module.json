@@ -6,12 +6,14 @@
 		"unique": [ "url" ],
 		"update": {
 			"keys": [
-				"thumb",
+				"enabled",
+				"top",
 				"thumbs",
 				"name",
 				"description",
 				"short",
 				"tag",
+				"tags",
 				"data"
 			]
 		},

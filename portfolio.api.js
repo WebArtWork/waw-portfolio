@@ -5,20 +5,11 @@ module.exports = async (waw) => {
 	waw.crud("portfolio", {
 		get: [
 			{
-				ensure: waw.next,
-			},
-			{
 				name: "public",
 				ensure: waw.next,
 				query: () => {
 					return {};
 				},
-			},
-			{
-				ensure: waw.next,
-				query: req => {
-					return { domain: req.get('host') };
-				}
 			}
 		],
 		update: {
@@ -57,7 +48,7 @@ module.exports = async (waw) => {
 						.replace(/[^a-z0-9]/g, "");
 				}
 				if (!req.body.url) {
-					req.body.url = null; 
+					req.body.url = null;
 				} else {
 					while (await waw.Portfolio.count({ url: req.body.url })) {
 						const url = req.body.url.split("_");
@@ -74,16 +65,57 @@ module.exports = async (waw) => {
 				next();
 			}
 		}
-	})
+	});
 
 
-	const docs = await waw.Portfolio.find({});
-	for (const doc of docs) {
-		if (!doc.domain) {
-			doc.domain = waw.config.land;
-			await doc.save();
+	const reloads = {};
+	waw.addJson(
+		"storePreparePortfolios",
+		async (store, fillJson, req) => {
+			reloads[store._id] = reloads[store._id] || [];
+			const fillAllPortfolios = async () => {
+				fillJson.allPortfolios = await waw.Portfolio.find({
+					tags: {
+						$in: fillJson.tagsIds,
+					},
+				}).lean();
+				for (const portfolio of fillJson.allPortfolios) {
+					portfolio.id = portfolio._id.toString();
+					portfolio._id = portfolio._id.toString();
+					portfolio.tags = (portfolio.tags||[]).map(t => t.toString());
+				}
+				fillJson.top_portfolios = fillJson.allPortfolios.filter((p) => {
+					return p.top;
+				});
+			};
+			fillAllPortfolios();
+			reloads[store._id].push(fillAllPortfolios);
+		},
+		"Prepare updatable documents of portfolios"
+	);
+	const tagsUpdate = async (tag) => {
+		setTimeout(() => {
+			for (const storeId of (tag.stores || [])) {
+				for (const reload of (reloads[storeId] || [])) {
+					reload();
+				}
+			}
+		}, 2000);
+	};
+	waw.on("tag_create", tagsUpdate);
+	waw.on("tag_update", tagsUpdate);
+	waw.on("tag_delete", tagsUpdate);
+	const portfoliosUpdate = async (portfolio) => {
+		const tags = await waw.Tag.find({
+			_id: portfolio.tags,
+		});
+		for (const tag of tags) {
+			tagsUpdate(tag);
 		}
-	}
+	};
+	waw.on("portfolio_create", portfoliosUpdate);
+	waw.on("portfolio_update", portfoliosUpdate);
+	waw.on("portfolio_delete", portfoliosUpdate);
 
 	waw.servePortfolios = async (req, res) => {
 		const query = {};
@@ -114,19 +146,19 @@ module.exports = async (waw) => {
 		);
 	};
 
-	waw.api({
-		domain: waw.config.land,
-		template: {
-			path: template,
-			prefix: "/template",
-			pages: "portfolio portfolios",
-		},
-		page: {
-			"/portfolios": waw.servePortfolios,
-			"/portfolios/:tag_id": waw.servePortfolios,
-			"/portfolio/:_id": waw.servePortfolio
-		}
-	});
+	// waw.api({
+	// 	domain: waw.config.land,
+	// 	template: {
+	// 		path: template,
+	// 		prefix: "/template",
+	// 		pages: "portfolio portfolios",
+	// 	},
+	// 	page: {
+	// 		"/portfolios": waw.servePortfolios,
+	// 		"/portfolios/:tag_id": waw.servePortfolios,
+	// 		"/portfolio/:_id": waw.servePortfolio
+	// 	}
+	// });
 	waw.servePortfolio = async (req, res) => {
 		const portfolio = await waw.Portfolio.findOne(
 			waw.mongoose.Types.ObjectId.isValid(req.params._id)
